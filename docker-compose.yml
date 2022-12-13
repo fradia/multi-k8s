@@ -1,0 +1,49 @@
+version: '3'
+services:
+  postgres: #name of the service
+    image: 'postgres:latest' #get the image from the docker hub
+    environment:
+      - POSTGRES_PASSWORD=postgres_password #default password
+  redis:
+    image: 'redis:latest' #get the image from the docker hub
+  api: #this is the server server
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules # to make sure the node_modules inside the container does not overwritten by any node_modules folder we might have
+      - ./server:/app # everything from server will be copied
+    environment: #establish how to connect to redis and postgres instance
+      - REDIS_HOST=redis #name of the redis instance
+      - REDIS_PORT=6379 #default port (look at the documentation for redis in the dockerhub)
+      - PGUSER=postgres #look docu in dockerhub (all default values)
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+    environment:
+      - WDS_SOCKET_PORT=0 #this is to avoid wesocket connection issues
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
+    environment: #establish how to connect to redis and postgres instance
+      - REDIS_HOST=redis #name of the redis instance
+      - REDIS_PORT=6379 #default port (look at the documentation for redis in the dockerhub)
+  ngnix:
+    restart: always # I always want to make sure ngnix is running
+    build:
+      context: ./ngnix
+      dockerfile: Dockerfile.dev
+    ports:
+      - '3050:80' #localport is 3050
