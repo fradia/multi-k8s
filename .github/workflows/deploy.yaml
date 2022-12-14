@@ -6,6 +6,7 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  SERVICE_ACCOUNT: '${{ secrets.SERVICE_ACCOUNT }}'
   SHA: $(git rev-parse HEAD)
   GKE_CLUSTER: docker-react-test
   LOCATION: europe-west1
@@ -32,22 +33,16 @@ jobs:
         uses: 'google-github-actions/auth@v0'
         with:
           workload_identity_provider: 'projects/950268361153/locations/global/workloadIdentityPools/docker-react-test-pool/providers/docker-react-test-provider'
-          service_account: 'udemy-doker-k8s@${{ env.PROJECT_ID }}.iam.gserviceaccount.com'
+          service_account: '{{ env.SERVICE_ACCOUNT }}@${{ env.PROJECT_ID }}.iam.gserviceaccount.com'
 
-      - name: Set Project
-        uses: google-github-actions/setup-gcloud@v0
-        with:
-          project_id: ${{ env.PROJECT_ID }}
+ #     - name: Set Project
+ #       uses: google-github-actions/setup-gcloud@v0
+ #       with:
+ #         project_id: ${{ env.PROJECT_ID }}
 
       - name: Auth
         run: |-
           gcloud --quiet auth configure-docker
-
-#      - name: Get Credentials
-#        uses: google-github-actions/get-gke-credentials@v0
-#        with:
-#          cluster_name: ${{ env.GKE_CLUSTER }}
-#          location: ${{ env.LOCATION }}
 
       - name: Build
         run: |-
@@ -56,7 +51,7 @@ jobs:
           docker build -t fracc/multi-server ./server 
           docker build -t fracc/multi-worker ./worker
 
-      - name: Push
+      - name: Push to docker hub
         run: |-
           docker push fracc/multi-client
           docker push fracc/multi-nginx
