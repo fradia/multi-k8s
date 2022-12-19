@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 3 # nr of pods the deployment has to make
+  selector:  # this is for the master to refer to the object created (using the label specified)
+    matchLabels:
+      component: server # this key-value pair can be arbitrary
+  template: #configuration used for every single pod
+    metadata:
+      labels:
+        component: server
+    spec:
+      containers:
+        - name: server
+          image: stephengrider/multi-server
+          ports:
+            - containerPort: 5000
+          env:
+            - name: REDIS_HOST
+              value: redis-cluster-ip-servic
+            - name: REDIS_PORT
+              value: "6379" # need to be a string
+            - name: PGUSER  # other option: save it as a secret
+              value: postgres
+            - name: PGHOST
+              value: postgres-cluster-ip-service # cluster ip service name
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: postgres # default postgres db name
+            - name: PGPASSWORD # name of the env variable (not related to the secret)
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword # name of the secret we created
+                  key: PGPASSWORD # key of the secret we created

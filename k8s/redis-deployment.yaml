@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+spec:
+  replicas: 1 # nr of pods the deployment has to make
+  selector:  # this is for the master to refer to the object created (using the label specified)
+    matchLabels:
+      component: redis
+  template: #configuration used for every single pod
+    metadata:
+      labels:
+        component: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis #copy from public repository on docker-hub
+          ports:
+            - containerPort: 6379 #default port for redis

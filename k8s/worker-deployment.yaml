@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deployment
+spec:
+  replicas: 1 # nr of pods the deployment has to make
+  selector:  # this is for the master to refer to the object created (using the label specified)
+    matchLabels:
+      component: worker
+  template: #configuration used for every single pod
+    metadata:
+      labels:
+        component: worker
+    spec:
+      containers:
+        - name: worker
+          image: stephengrider/multi-worker
+          env:
+            - name: REDIS_HOST
+              value: redis-cluster-ip-service # cluster ip service name of redis
+            - name: REDIS_PORT
+              value: "6379" # default port

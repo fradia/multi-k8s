@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+# UPDATE API
+kind: Ingress
+metadata:
+  name: ingress-service
+  annotations:
+    kubernetes.io/ingress.class: 'nginx' # ingress controller based on the nginx project
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+    # ADD ANNOTATION
+    nginx.ingress.kubernetes.io/rewrite-target: /$1 #/api will be removed in the server (check previous docker-compose implementation)
+    # UPDATE ANNOTATION
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /?(.*) # traffic that comes to / will be sent to the service client-cluster-ip-service
+            # UPDATE PATH
+            pathType: Prefix
+            # ADD PATHTYPE
+            backend:
+              service:
+                # UPDATE SERVICE FIELDS
+                name: client-cluster-ip-service
+                port:
+                  number: 3000
+          - path: /api/?(.*) # traffic that comes to /api will be sent to the service server-cluster-ip-service
+            # UPDATE PATH
+            pathType: Prefix
+            # ADD PATHTYPE
+            backend:
+              service:
+                # UPDATE SERVICE FIELDS
+                name: server-cluster-ip-service
+                port:
+                  number: 5000

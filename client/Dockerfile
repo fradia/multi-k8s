@@ -11,6 +11,6 @@ RUN npm run build
 FROM nginx
 # need to expose port for deployment
 EXPOSE 3000
-# copy from the builder phase. The destination folder is a setting from ngnix
+# copy from the builder phase. The destination folder is a setting from nginx
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/build  /usr/share/nginx/html
