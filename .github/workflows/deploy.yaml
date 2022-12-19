@@ -34,7 +34,7 @@ jobs:
           service_account: '${{ env.SERVICE_ACCOUNT }}@${{ env.GKE_PROJECT }}.iam.gserviceaccount.com'
 
       - name: Get Credentials
-        uses: google-github-actions/get-gke-credentials@v1
+        uses: 'google-github-actions/get-gke-credentials@v1'
         with:
           cluster_name: ${{ env.GKE_CLUSTER }}
           location: ${{ env.LOCATION }}
