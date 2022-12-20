@@ -9,7 +9,7 @@ env:
   SHA: $(git rev-parse HEAD)
   LOCATION: europe-west1-b
   GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: react-app-test-1
+  GKE_CLUSTER: react-app-test
 
 jobs:
   build:
@@ -30,14 +30,15 @@ jobs:
       - name: Set Identity Provider
         uses: 'google-github-actions/auth@v1'
         with:
+#          token_format: access_token
           workload_identity_provider: 'projects/950268361153/locations/global/workloadIdentityPools/docker-react-test-pool/providers/docker-react-test-provider'
           service_account: '${{ env.SERVICE_ACCOUNT }}@${{ env.GKE_PROJECT }}.iam.gserviceaccount.com'
 
-      - name: Get Credentials
-        uses: 'google-github-actions/get-gke-credentials@v1'
-        with:
-          cluster_name: ${{ env.GKE_CLUSTER }}
-          location: ${{ env.LOCATION }}
+#      - name: Get Credentials
+#        uses: 'google-github-actions/get-gke-credentials@v1'
+#        with:
+#          cluster_name: ${{ env.GKE_CLUSTER }}
+#          location: ${{ env.LOCATION }}
 
       - name: Set Project
         uses: google-github-actions/setup-gcloud@v0
