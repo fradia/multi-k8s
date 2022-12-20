@@ -51,23 +51,23 @@ jobs:
 
       - name: Build
         run: |-
-          docker build -t "gcr.io/${{ secrets.GKE_PROJECT }}/multi-client:latest" -t "gcr.io/${{ secrets.GKE_PROJECT }}/multi-client:${{ env.SHA }}" ./client 
-          docker build -t "gcr.io/${{ secrets.GKE_PROJECT }}/multi-server:latest" -t "gcr.io/${{ secrets.GKE_PROJECT }}/multi-server:${{ env.SHA }}" ./server 
-          docker build -t "gcr.io/${{ secrets.GKE_PROJECT }}/multi-worker:latest" -t "gcr.io/${{ secrets.GKE_PROJECT }}/multi-worker:${{ env.SHA }}" ./worker
+          docker build -t fracc/multi-client:latest -t fracc/multi-client:${{ env.SHA }} ./client 
+          docker build -t fracc/multi-server:latest -t fracc/multi-server:${{ env.SHA }} ./server 
+          docker build -t fracc/multi-worker:latest -t fracc/multi-worker:${{ env.SHA }} ./worker
 
       - name: Push
         run: |-
-          docker push "gcr.io/${{ secrets.GKE_PROJECT }}/multi-client:latest"
-          docker push "gcr.io/${{ secrets.GKE_PROJECT }}/multi-server:latest"
-          docker push "gcr.io/${{ secrets.GKE_PROJECT }}/multi-worker:latest"
+          docker push fracc/multi-client:latest
+          docker push fracc/multi-server:latest
+          docker push fracc/multi-worker:latest
           
-          docker push "gcr.io/${{ secrets.GKE_PROJECT }}/multi-client:${{ env.SHA }}"
-          docker push "gcr.io/${{ secrets.GKE_PROJECT }}/multi-server:${{ env.SHA }}"
-          docker push "gcr.io/${{ secrets.GKE_PROJECT }}/multi-worker:${{ env.SHA }}"
+          docker push fracc/multi-client:${{ env.SHA }}
+          docker push fracc/multi-server:${{ env.SHA }}
+          docker push fracc/multi-worker:${{ env.SHA }}
 
       - name: Apply
         run: |-
           kubectl apply -f k8s
-          kubectl set image deployments/client-deployment client="gcr.io/${{ secrets.GKE_PROJECT }}/multi-client:${{ env.SHA }}"
-          kubectl set image deployments/server-deployment server="gcr.io/${{ secrets.GKE_PROJECT }}/multi-server:${{ env.SHA }}"
-          kubectl set image deployments/worker-deployment worker="gcr.io/${{ secrets.GKE_PROJECT }}/multi-worker:${{ env.SHA }}"
+          kubectl set image deployments/client-deployment client=fracc/multi-client:${{ env.SHA }}
+          kubectl set image deployments/server-deployment server=fracc/multi-server:${{ env.SHA }}
+          kubectl set image deployments/worker-deployment worker=fracc/multi-worker:${{ env.SHA }}
