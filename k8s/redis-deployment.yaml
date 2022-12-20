@@ -4,7 +4,7 @@ metadata:
   name: redis-deployment
 spec:
   replicas: 1 # nr of pods the deployment has to make
-  selector:  # this is for the master to refer to the object created (using the label specified)
+  selector: # this is for the master to refer to the object created (using the label specified)
     matchLabels:
       component: redis
   template: #configuration used for every single pod
