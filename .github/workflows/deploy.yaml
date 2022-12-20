@@ -31,15 +31,14 @@ jobs:
       - name: Set Identity Provider
         uses: 'google-github-actions/auth@v1'
         with:
-#          token_format: access_token
           workload_identity_provider: 'projects/950268361153/locations/global/workloadIdentityPools/docker-react-test-pool/providers/docker-react-test-provider'
           service_account: '${{ env.SERVICE_ACCOUNT }}@${{ env.GKE_PROJECT }}.iam.gserviceaccount.com'
 
-#      - name: Get Credentials
-#        uses: 'google-github-actions/get-gke-credentials@v1'
-#        with:
-#          cluster_name: ${{ env.GKE_CLUSTER }}
-#          location: ${{ env.LOCATION }}
+      - name: Get Credentials
+        uses: 'google-github-actions/get-gke-credentials@v1'
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.LOCATION }}
 
       - name: Set Project
         uses: google-github-actions/setup-gcloud@v0
@@ -54,7 +53,7 @@ jobs:
         run: |-
           docker build -t "gcr.io/${{ secrets.GKE_PROJECT }}/multi-client:latest" -t "gcr.io/${{ secrets.GKE_PROJECT }}/multi-client:${{ env.SHA }}" ./client 
           docker build -t "gcr.io/${{ secrets.GKE_PROJECT }}/multi-server:latest" -t "gcr.io/${{ secrets.GKE_PROJECT }}/multi-server:${{ env.SHA }}" ./server 
-          docker build -t "gcr.io/${{ secrets.GKE_PROJECT }}/multi-worker:latest" -t "gcr.io/${{ secrets.GKE_PROJECT }}/multi-worker:${{ env.SHA }}"./worker
+          docker build -t "gcr.io/${{ secrets.GKE_PROJECT }}/multi-worker:latest" -t "gcr.io/${{ secrets.GKE_PROJECT }}/multi-worker:${{ env.SHA }}" ./worker
 
       - name: Push
         run: |-
